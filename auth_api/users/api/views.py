@@ -136,4 +136,4 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         """
 
         domain_url = settings.DOMAIN_URL
-        return f"{domain_url}/verify-account/{emailconfirmation.key}"
+        return f"{domain_url}/auth/verify-account/{emailconfirmation.key}"
