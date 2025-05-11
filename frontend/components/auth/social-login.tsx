@@ -18,7 +18,7 @@ interface SocialButtonProps {
 }
 
 // Social login button component
-const SocialButton: React.FC<SocialButtonProps> = ({ provider, label, icon, disabled = false, onClick }) => {
+const SocialButton = ({ provider, label, icon, disabled = false, onClick }: SocialButtonProps) => {
   return (
     <Button
       variant="outline"
@@ -64,13 +64,24 @@ export function SocialLogin() {
     setIsLoading(true)
 
     try {
-      // This is a simplified example. In a real app, you would use a proper OAuth flow
-      // For example, using next-auth or a similar library
+      // In a real implementation, you would use a proper OAuth flow
+      // This is a simplified example that would need to be replaced with actual OAuth
 
-      // Mock implementation - in a real app, you would get this token from Google OAuth
+      // 1. Initialize Google OAuth client
+      // const googleAuth = window.gapi.auth2.getAuthInstance()
+
+      // 2. Sign in with Google
+      // const googleUser = await googleAuth.signIn()
+
+      // 3. Get the ID token
+      // const token = googleUser.getAuthResponse().id_token
+
+      // For demo purposes only - in a real app, you would get this token from Google OAuth
       const mockGoogleToken = "google-oauth-token"
 
+      // 4. Send the token to your backend
       await socialLogin("google", mockGoogleToken)
+
       // Redirect is handled in the auth provider
     } catch (err: any) {
       setError(err.message || "Social login failed. Please try again.")
