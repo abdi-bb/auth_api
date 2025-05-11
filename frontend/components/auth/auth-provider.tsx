@@ -1,6 +1,9 @@
 "use client"
 
+import type React from "react"
+
 import { createContext, useContext, useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { toast } from "@/components/ui/use-toast"
 
 interface User {
@@ -20,10 +23,21 @@ type AuthContextType = {
   user: User | null
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  socialLogin: (provider: string, token: string) => Promise<void>
   isAuthenticated: boolean
   isAdmin: boolean
   updateUser: (userData: Partial<User>) => Promise<void>
   loading: boolean
+}
+
+// Frontend Routes
+const ROUTES = {
+  HOME: "/",
+  LOGIN: "/auth/signin",
+  SIGNUP: "/auth/signup",
+  DASHBOARD: "/dashboard",
+  PROFILE: "/profile",
+  ADMIN: "/admin",
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -33,6 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   // Check auth status on mount
   useEffect(() => {
@@ -101,11 +116,79 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsAuthenticated(true)
       setIsAdmin(userData.is_staff)
 
+      // Redirect based on user role
+      if (userData.is_staff) {
+        router.push(ROUTES.ADMIN)
+      } else {
+        router.push(ROUTES.DASHBOARD)
+      }
+
       return userData
     } catch (error) {
       console.error("Login error:", error)
       toast({
         title: "Login Failed",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        variant: "destructive",
+      })
+      throw error
+    }
+  }
+
+  const socialLogin = async (provider: string, token: string) => {
+    try {
+      let endpoint = ""
+
+      if (provider === "google") {
+        endpoint = "/api/auth/social/google/"
+      } else {
+        throw new Error(`Unsupported provider: ${provider}`)
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ access_token: token }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || `${provider} login failed`)
+      }
+
+      // Get user data after successful login
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/user/`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!userResponse.ok) {
+        throw new Error("Failed to fetch user data")
+      }
+
+      const userData = await userResponse.json()
+      setUser(userData)
+      setIsAuthenticated(true)
+      setIsAdmin(userData.is_staff)
+
+      // Redirect based on user role
+      if (userData.is_staff) {
+        router.push(ROUTES.ADMIN)
+      } else {
+        router.push(ROUTES.DASHBOARD)
+      }
+
+      return userData
+    } catch (error) {
+      console.error("Social login error:", error)
+      toast({
+        title: "Social Login Failed",
         description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       })
@@ -125,6 +208,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null)
       setIsAuthenticated(false)
       setIsAdmin(false)
+      router.push(ROUTES.LOGIN)
     }
   }
 
@@ -154,15 +238,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      login,
-      logout,
-      isAuthenticated,
-      isAdmin,
-      updateUser,
-      loading
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        socialLogin,
+        isAuthenticated,
+        isAdmin,
+        updateUser,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )
