@@ -8,9 +8,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 
 export function SigninForm() {
@@ -38,7 +36,6 @@ export function SigninForm() {
       return () => clearTimeout(timer)
     }
   }, [message])
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

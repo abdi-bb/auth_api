@@ -4,7 +4,6 @@ import type React from "react"
 
 import { createContext, useContext, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "@/components/ui/use-toast"
 
 interface User {
   id: number
@@ -21,12 +20,12 @@ interface User {
 
 type AuthContextType = {
   user: User | null
-  login: (email: string, password: string) => Promise<void>
+  login: (email: string, password: string) => Promise<User | null>
   logout: () => Promise<void>
-  socialLogin: (provider: string, token: string) => Promise<void>
+  socialLogin: (provider: string, token: string) => Promise<User | null>
   isAuthenticated: boolean
   isAdmin: boolean
-  updateUser: (userData: Partial<User>) => Promise<void>
+  updateUser: (userData: Partial<User>) => Promise<User | null>
   loading: boolean
 }
 
@@ -82,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User | null> => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login/`, {
         method: "POST",
@@ -126,16 +125,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return userData
     } catch (error) {
       console.error("Login error:", error)
-      toast({
-        title: "Login Failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
-        variant: "destructive",
-      })
+      // Let the component handle the error display
       throw error
     }
   }
 
-  const socialLogin = async (provider: string, token: string) => {
+  const socialLogin = async (provider: string, token: string): Promise<User | null> => {
     try {
       let endpoint = ""
 
@@ -187,16 +182,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return userData
     } catch (error) {
       console.error("Social login error:", error)
-      toast({
-        title: "Social Login Failed",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
-        variant: "destructive",
-      })
+      // Let the component handle the error display
       throw error
     }
   }
 
-  const logout = async () => {
+  const logout = async (): Promise<void> => {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout/`, {
         method: "POST",
@@ -212,7 +203,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const updateUser = async (userData: Partial<User>) => {
+  const updateUser = async (userData: Partial<User>): Promise<User | null> => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/user/`, {
         method: "PATCH",
