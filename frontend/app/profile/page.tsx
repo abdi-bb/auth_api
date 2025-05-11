@@ -4,7 +4,7 @@ import { ChangePasswordForm } from "@/components/auth/change-password-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const metadata: Metadata = {
-  title: "Profile Settings | Authentication System",
+  title: "Profile Settings",
   description: "Manage your profile settings",
 }
 

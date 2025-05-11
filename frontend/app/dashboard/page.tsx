@@ -3,7 +3,7 @@ import { RouteGuard } from "@/components/auth/route-guard"
 import { ProfileSettings } from "@/components/auth/profile-settings"
 
 export const metadata: Metadata = {
-  title: "Dashboard | Authentication System",
+  title: "Dashboard",
   description: "User dashboard",
 }
 

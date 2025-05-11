@@ -9,7 +9,10 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Authentication System",
+  title: {
+    default: "Authentication System | Authentication System",
+    template: "%s | Authentication System",
+  },
   description: "Complete authentication system with Django REST API",
 }
 

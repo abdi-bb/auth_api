@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { RouteGuard } from "@/components/auth/route-guard"
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard | Authentication System",
+  title: "Admin Dashboard",
   description: "Admin dashboard",
 }
 
