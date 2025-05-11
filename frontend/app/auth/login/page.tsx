@@ -1,15 +1,15 @@
 import type { Metadata } from "next"
-import { LoginForm } from "@/components/auth/login-form"
+import LoginClient from "./login-client"
 
 export const metadata: Metadata = {
-  title: "Login | Authentication System",
-  description: "Log in to your account",
+  title: "Sign In",
+  description: "Sign in to your account",
+  robots: {
+    index: true,
+    follow: true,
+  },
 }
 
 export default function LoginPage() {
-  return (
-    <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <LoginForm />
-    </div>
-  )
+  return <LoginClient />
 }

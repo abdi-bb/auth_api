@@ -1,61 +1,83 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { ROUTES } from "@/lib/auth"
 
-export function middleware(request: NextRequest) {
+// List of public routes that don't require authentication
+const publicRoutes = ["/auth/login", "/auth/signup", "/auth/forgot-password", "/auth/verify-account"]
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Get auth tokens from cookies or localStorage (if available in middleware)
-  const authTokens = request.cookies.get("auth_tokens")?.value
-  const isAuthenticated = !!authTokens
+  // Check if the current path is a public route
+  const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith("/auth/verify-account/"))
 
-  // Parse user data to check if admin (if available)
+  // If user is authenticated and trying to access a public route
+  // 2. Check authentication via API
+  let isAuthenticated = false
   let isAdmin = false
   try {
-    const userData = request.cookies.get("auth_user")?.value
-    if (userData) {
-      const user = JSON.parse(userData)
-      isAdmin = user.is_staff === true
+    const authResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/auth/user/`,
+      {
+        credentials: 'include',
+      }
+    )
+    if (authResponse.ok) {
+      isAuthenticated = true
+      const userData = await authResponse.json()
+      isAdmin = userData.is_staff
     }
   } catch (error) {
-    console.error("Error parsing user data in middleware:", error)
+    console.error("Auth check error:", error)
   }
 
-  // Auth routes that should redirect to dashboard if already authenticated
-  const authRoutes = [ROUTES.LOGIN, ROUTES.REGISTER, ROUTES.FORGOT_PASSWORD]
+  if (isAuthenticated) {
+    try {
 
-  // Protected routes that require authentication
-  const protectedRoutes = [ROUTES.DASHBOARD, ROUTES.PROFILE]
+      // If user is authenticated and trying to access a public route, redirect to appropriate dashboard
+      if (isPublicRoute && !(pathname === "/auth/login")) {
+        if (isAdmin) {
+          return NextResponse.redirect(new URL("/admin", request.url))
+        }
+        return NextResponse.redirect(new URL("/dashboard", request.url))
+      }
 
-  // Admin routes that require admin privileges
-  const adminRoutes = [ROUTES.ADMIN]
+      // If user is authenticated and trying to access dashboard but is an admin
+      if (pathname === "/dashboard") {
+        if (isAdmin) {
+          return NextResponse.redirect(new URL("/admin", request.url))
+        }
+      }
 
-  // Redirect authenticated users away from auth pages
-  if (isAuthenticated && authRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL(isAdmin ? ROUTES.ADMIN : ROUTES.DASHBOARD, request.url))
-  }
-
-  // Redirect unauthenticated users away from protected pages
-  if (!isAuthenticated && protectedRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL(`${ROUTES.LOGIN}?returnUrl=${encodeURIComponent(pathname)}`, request.url))
-  }
-
-  // Redirect non-admin users away from admin pages
-  if (isAuthenticated && !isAdmin && adminRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL(ROUTES.DASHBOARD, request.url))
+      // Similarly, if a non-admin tries to access /admin, redirect to dashboard
+      if (pathname === "/admin") {
+        if (!isAdmin) {
+          return NextResponse.redirect(new URL("/dashboard", request.url))
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing auth data:", error)
+      // Clear invalid cookies
+      const response = NextResponse.next()
+      response.cookies.delete("auth_session")
+      response.cookies.delete("auth_refresh_session")
+      return response
+    }
   }
 
   return NextResponse.next()
 }
 
+// Configure the middleware to run on specific paths
 export const config = {
   matcher: [
-    // Match all auth routes
-    "/auth/:path*",
-    // Match all protected routes
-    "/dashboard/:path*",
-    "/profile/:path*",
-    // Match all admin routes
-    "/admin/:path*",
+    /*
+     * Match all request paths except for:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     * - api routes
+     */
+    "/((?!_next/static|_next/image|favicon.ico|public|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|mov|avi|woff|woff2)$).*)",
   ],
 }
