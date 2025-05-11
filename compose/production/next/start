@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+echo "Collecting environment configurations..."
+# (Optional pre-start actions)
+
+echo "Starting Node Prod server..."
+exec npm run start

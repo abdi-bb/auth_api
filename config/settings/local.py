@@ -71,3 +71,33 @@ INSTALLED_APPS += ["django_extensions"]
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+# My stuff
+from decouple import config  # noqa: E402
+
+# Email Settings
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND",
+    "django.core.mail.backends.console.EmailBackend",
+)
+
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL",
+    "Savanna Accountancy <noreply@savannaaccountancy.co.uk>",
+)
+ADMIN_EMAIL = config("ADMIN_EMAIL", "admin@savannaaccountancy.co.uk")
+
+
+# Override ALLOWED_HOSTS settings
+ALLOWED_HOSTS = [
+    "localhost",
+    "0.0.0.0",  # noqa: S104 - Allow binding to all interfaces in development
+    "127.0.0.1",
+    "app",
+]
+
+DOMAIN_URL = config(
+    "DOMAIN_URL",
+    default="http://localhost:3000",
+)
