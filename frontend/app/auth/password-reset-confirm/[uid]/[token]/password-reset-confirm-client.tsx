@@ -285,7 +285,7 @@ export default function PasswordResetConfirmClient({ params }: { params: { uid: 
                                 </p>
                                 <div className="mt-6 flex justify-center">
                                     <Button asChild>
-                                        <Link href="/auth/login">Go to Login</Link>
+                                        <Link href="/auth/signin">Go to Sign In</Link>
                                     </Button>
                                 </div>
                             </div>

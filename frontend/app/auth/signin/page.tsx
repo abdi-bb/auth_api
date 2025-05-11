@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import LoginClient from "./login-client"
+import SigninClient from "./signin-client"
 
 export const metadata: Metadata = {
   title: "Sign In",
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 }
 
 export default function LoginPage() {
-  return <LoginClient />
+  return <SigninClient />
 }

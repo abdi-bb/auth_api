@@ -52,7 +52,7 @@ export function ForgotPasswordForm() {
             </AlertDescription>
           </Alert>
           <Button asChild className="w-full">
-            <Link href="/auth/login">Return to Login</Link>
+            <Link href="/auth/signin">Return to Sign In</Link>
           </Button>
         </div>
       ) : (
@@ -89,11 +89,11 @@ export function ForgotPasswordForm() {
 
           <div className="text-center">
             <Link
-              href="/auth/login"
+              href="/auth/signin"
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
             >
               <ArrowLeft className="mr-1 h-4 w-4" />
-              Back to login
+              Back to Sign In
             </Link>
           </div>
         </form>

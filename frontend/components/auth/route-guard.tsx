@@ -35,7 +35,7 @@ export function RouteGuard({ children, requireAuth = false, requireAdmin = false
       if (!isAuthenticated) {
         console.log("Not authenticated, redirecting to login")
         setAuthorized(false)
-        router.push(`/login?redirect=${encodeURIComponent(pathname)}`)
+        router.push(`/auth/signin?redirect=${encodeURIComponent(pathname)}`)
         setIsChecking(false)
         return
       }

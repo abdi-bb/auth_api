@@ -51,7 +51,7 @@ export default function SignupSuccessClient() {
                 <Link href="/">Back to Home</Link>
               </Button>
               <Button asChild className="flex-1 group">
-                <Link href="/auth/login" className="flex items-center justify-center">
+                <Link href="/auth/signin" className="flex items-center justify-center">
                   Check Later
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -60,8 +60,8 @@ export default function SignupSuccessClient() {
           ) : (
             <>
               <Button asChild className="flex-1 group">
-                <Link href="/auth/login" className="flex items-center justify-center">
-                  Log In Now
+                <Link href="/auth/signin" className="flex items-center justify-center">
+                  Sign In Now
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>

@@ -4,11 +4,11 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Footer } from "@/components/layout/footer"
 import { Navbar } from "@/components/layout/navbar"
-import { LoginForm } from "@/components/auth/login-form"
+import { SigninForm } from "@/components/auth/signin-form"
 import { useAuth } from "@/components/auth/auth-provider"
 import Link from "next/link"
 
-export default function LoginClient() {
+export default function SigninClient() {
     const { isAuthenticated, user, loading: authLoading } = useAuth()
     const router = useRouter()
     const [showLoginForm, setShowLoginForm] = useState(false)
@@ -46,7 +46,7 @@ export default function LoginClient() {
                             </p>
                         </div>
                         <div className="mt-8">
-                            <LoginForm />
+                            <SigninForm />
                         </div>
                     </div>
                 </div>

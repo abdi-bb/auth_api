@@ -10,7 +10,7 @@ export default function HomePage() {
 
         <div className="mt-8 space-y-4">
           <Button asChild size="lg" className="w-full">
-            <Link href="/auth/login">Sign In</Link>
+            <Link href="/auth/signin">Sign In</Link>
           </Button>
 
           <Button asChild variant="outline" size="lg" className="w-full">

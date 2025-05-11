@@ -21,7 +21,7 @@ export function AuthStatus() {
     return (
       <div className="flex items-center space-x-2">
         <Button asChild variant="outline" size="sm">
-          <Link href="/auth/login">Sign In</Link>
+          <Link href="/auth/signin">Sign In</Link>
         </Button>
         <Button asChild size="sm">
           <Link href="/auth/signup">Sign Up</Link>

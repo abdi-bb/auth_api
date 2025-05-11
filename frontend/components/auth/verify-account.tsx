@@ -28,7 +28,7 @@ export function VerifyAccount({ verificationKey }: { verificationKey: string }) 
                     title: "Account Verified",
                     description: "Your account has been successfully verified. You can now log in.",
                 })
-                router.push("/auth/login")
+                router.push("/auth/signin")
             } else {
                 const errorData = await response.json()
                 toast({

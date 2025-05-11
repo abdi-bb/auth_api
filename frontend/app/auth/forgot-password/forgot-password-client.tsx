@@ -80,9 +80,9 @@ export default function ForgotPasswordClient() {
         <div className="flex flex-col justify-center flex-1 px-4 py-12 sm:px-6 lg:px-20 xl:px-24">
           <div className="w-full max-w-md mx-auto">
             <div className="mb-6">
-              <Link href="/auth/login" className="inline-flex items-center text-sm text-primary hover:text-primary-dark">
+              <Link href="/auth/signin" className="inline-flex items-center text-sm text-primary hover:text-primary-dark">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to login
+                Back to Sign In
               </Link>
             </div>
 

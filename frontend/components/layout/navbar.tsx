@@ -30,9 +30,8 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium ${
-                  pathname === item.href ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
-                }`}
+                className={`px-3 py-2 rounded-md text-sm font-medium ${pathname === item.href ? "text-blue-600" : "text-gray-700 hover:text-blue-600"
+                  }`}
               >
                 {item.label}
               </Link>
@@ -49,7 +48,7 @@ export function Navbar() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Button asChild variant="outline">
-                  <Link href="/auth/login">Login</Link>
+                  <Link href="/auth/signin">Sign In</Link>
                 </Button>
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
                   <Link href="/auth/signup">Sign Up</Link>
@@ -71,9 +70,8 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`block px-3 py-2 rounded-md text-base font-medium ${
-                  pathname === item.href ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
-                }`}
+                className={`block px-3 py-2 rounded-md text-base font-medium ${pathname === item.href ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}
@@ -101,11 +99,11 @@ export function Navbar() {
             ) : (
               <div className="space-y-1">
                 <Link
-                  href="/auth/login"
+                  href="/auth/signin"
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 border border-gray-300 hover:bg-gray-50"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Login
+                  Sign In
                 </Link>
                 <Link
                   href="/auth/signup"

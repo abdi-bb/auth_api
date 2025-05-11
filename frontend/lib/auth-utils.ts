@@ -25,7 +25,7 @@ export const API_ROUTES = {
 // Frontend Routes
 export const ROUTES = {
   HOME: "/",
-  LOGIN: "/auth/login",
+  LOGIN: "/auth/signin",
   SIGNUP: "/auth/signup",
   DASHBOARD: "/dashboard",
   ADMIN: "/admin",
