@@ -1,57 +1,82 @@
 "use client"
 
-import { useEffect, useState, type ReactNode } from "react"
+import type React from "react"
+
+import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/components/auth/auth-provider"
-import { Loader2 } from "lucide-react"
 
-interface RouteGuardProps {
-  children: ReactNode
+type RouteGuardProps = {
+  children: React.ReactNode
   requireAuth?: boolean
   requireAdmin?: boolean
 }
 
 export function RouteGuard({ children, requireAuth = false, requireAdmin = false }: RouteGuardProps) {
-  const { isAuthenticated, isAdmin, isLoading } = useAuth()
+  const { isAuthenticated, isAdmin } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
   const [authorized, setAuthorized] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
-    // Authentication check
+    // Authentication check function
     const authCheck = () => {
-      if (isLoading) return
+      setIsChecking(true)
 
-      // If the route requires authentication and the user is not authenticated
-      if (requireAuth && !isAuthenticated) {
-        setAuthorized(false)
-        router.push(`/auth/login?returnUrl=${encodeURIComponent(pathname)}`)
+      // If no authentication is required, allow access
+      if (!requireAuth) {
+        setAuthorized(true)
+        setIsChecking(false)
         return
       }
 
-      // If the route requires admin privileges and the user is not an admin
+      // If authentication is required but user is not authenticated
+      if (!isAuthenticated) {
+        console.log("Not authenticated, redirecting to login")
+        setAuthorized(false)
+        router.push(`/login?redirect=${encodeURIComponent(pathname)}`)
+        setIsChecking(false)
+        return
+      }
+
+      // If admin access is required but user is not an admin
       if (requireAdmin && !isAdmin) {
+        console.log("Not admin, redirecting to dashboard")
         setAuthorized(false)
-        router.push("/dashboard")
+        router.push("/dashboard") // Redirect to user dashboard
+        setIsChecking(false)
         return
       }
 
-      // If all checks pass, set authorized to true
+      // If all checks pass, authorize access
+      console.log("Authorization successful")
       setAuthorized(true)
+      setIsChecking(false)
     }
 
+    // Run auth check
     authCheck()
-  }, [isAuthenticated, isAdmin, isLoading, requireAuth, requireAdmin, router, pathname])
 
-  // Show loading indicator while checking authentication
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    )
+    // Add router event listener for route changes
+    const handleRouteChange = () => authCheck()
+
+    // Clean up event listener
+    return () => {
+      // If we had router events to listen to, we'd clean them up here
+    }
+  }, [isAuthenticated, isAdmin, pathname, requireAuth, requireAdmin, router])
+
+  // Show loading or nothing while checking authentication
+  if (isChecking) {
+    return <div className="flex items-center justify-center h-screen">Loading...</div>
   }
 
-  // If authorized, render children
-  return authorized ? <>{children}</> : null
+  // If not authorized, show nothing (redirect should happen)
+  if (!authorized) {
+    return null
+  }
+
+  // If authorized, show children
+  return <>{children}</>
 }

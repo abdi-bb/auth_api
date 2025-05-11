@@ -10,6 +10,8 @@ export const metadata: Metadata = {
     },
 }
 
-export default function PasswordResetConfirmPage({ params }: { params: { uid: string; token: string } }) {
-    return <PasswordResetConfirmClient params={params} />
+export default async function PasswordResetConfirmPage({ params }: { params: { uid: string; token: string } }) {
+    // In Next.js 15, params is a Promise that resolves to the actual parameters
+    const parsedParams = await params;
+    return <PasswordResetConfirmClient params={parsedParams} />
 }
