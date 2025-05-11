@@ -15,9 +15,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/*
-!lib/auth-service.ts
-!lib/utils.ts
+lib/
 lib64/
 parts/
 sdist/
