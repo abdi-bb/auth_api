@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import UserManager as DjangoUserManager
 
 if TYPE_CHECKING:
@@ -8,8 +9,6 @@ if TYPE_CHECKING:
 
 class UserManager(DjangoUserManager["User"]):
     """Custom manager for the User model."""
-
-    use_in_migrations = True
 
     def _create_user(self, email: str, password: str | None, **extra_fields):
         """
@@ -20,7 +19,7 @@ class UserManager(DjangoUserManager["User"]):
             raise ValueError(msg)
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        user.password = make_password(password)
         user.save(using=self._db)
         return user
 

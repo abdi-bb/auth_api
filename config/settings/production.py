@@ -158,26 +158,3 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
-
-
-# My stuff
-from decouple import config  # noqa: E402
-
-# Email Settings
-EMAIL_BACKEND = config("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = config("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(config("EMAIL_PORT", 587))
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", "True") == "True"
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", "noreply@savannaaccountancy.co.uk")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", "")
-
-DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL",
-    "Savanna Accountancy <noreply@savannaaccountancy.co.uk>",
-)
-ADMIN_EMAIL = config("ADMIN_EMAIL", "admin@savannaaccountancy.co.uk")
-
-DOMAIN_URL = config(
-    "DOMAIN_URL",
-    default="https://savannaaccountancy.co.uk",
-)

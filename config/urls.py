@@ -1,19 +1,26 @@
-from dj_rest_auth.views import PasswordResetConfirmView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include
 from django.urls import path
 from django.views import defaults as default_views
+from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
+    path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
+    path(
+        "about/",
+        TemplateView.as_view(template_name="pages/about.html"),
+        name="about",
+    ),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # Add this line for admin_interface language support
-    path("i18n/", include("django.conf.urls.i18n")),
+    # User management
+    path("users/", include("auth_api.users.urls", namespace="users")),
+    path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     # ...
     # Media files
@@ -25,18 +32,12 @@ urlpatterns += [
     # API base url
     path("api/", include("config.api_router")),
     # DRF auth token
-    path("api/auth-token/", obtain_auth_token),
+    path("api/auth-token/", obtain_auth_token, name="obtain_auth_token"),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
         "api/docs/",
         SpectacularSwaggerView.as_view(url_name="api-schema"),
         name="api-docs",
-    ),
-    # Password reset frontend url
-    path(
-        "auth/password-reset-confirm/<slug:uidb64>/<slug:token>/",
-        PasswordResetConfirmView.as_view(),
-        name="password_reset_confirm",
     ),
 ]
 
@@ -68,8 +69,3 @@ if settings.DEBUG:
             path("__debug__/", include(debug_toolbar.urls)),
             *urlpatterns,
         ]
-
-# Adding login to the Browsable API
-urlpatterns += [
-    path("api-auth/", include("rest_framework.urls")),
-]
