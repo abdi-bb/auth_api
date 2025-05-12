@@ -3,7 +3,7 @@ import PasswordResetConfirmClient from "./password-reset-confirm-client"
 
 export const metadata: Metadata = {
     title: "Reset Password",
-    description: "Create a new password for your Savanna Accountancy account.",
+    description: "Create a new password for your account",
     robots: {
         index: false,
         follow: false,
