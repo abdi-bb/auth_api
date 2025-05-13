@@ -2,39 +2,30 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/components/auth/auth-provider"
 import { Loader2 } from "lucide-react"
 
-interface SocialLoginProps {
-  onSuccess?: () => void
-  onError?: (error: Error) => void
-}
+export function SocialLogin() {
+  const [isLoading, setIsLoading] = useState(false)
 
-export function SocialLogin({ onSuccess, onError }: SocialLoginProps) {
-  const { socialLogin } = useAuth()
-  const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({
-    google: false,
-    github: false,
-  })
+  // Simplified Google OAuth flow
+  const handleGoogleLogin = () => {
+    setIsLoading(true)
 
-  // In a real implementation, you would use a proper OAuth library
-  // like @react-oauth/google to handle the OAuth flow
-  const handleGoogleLogin = async () => {
-    setIsLoading((prev) => ({ ...prev, google: true }))
     try {
-      // This is a mock implementation
-      // In a real app, you would get this token from Google OAuth
-      const mockGoogleToken = "google-mock-token"
+      // Get the client ID from environment variables
+      const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""
 
-      // Call the socialLogin function from the auth context
-      await socialLogin("google", mockGoogleToken)
+      // Set the callback URL to our Google sign-in callback route
+      const redirectUri = `${window.location.origin}/auth/signin/google`
 
-      if (onSuccess) onSuccess()
+      // Construct the simplified Google OAuth URL
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${encodeURIComponent(redirectUri)}&prompt=consent&response_type=code&client_id=${clientId}&scope=openid%20email%20profile&access_type=offline`
+
+      // Redirect to Google's OAuth page
+      window.location.href = googleAuthUrl
     } catch (error) {
-      console.error("Google login error:", error)
-      if (onError && error instanceof Error) onError(error)
-    } finally {
-      setIsLoading((prev) => ({ ...prev, google: false }))
+      console.error("Failed to initiate Google login:", error)
+      setIsLoading(false)
     }
   }
 
@@ -54,9 +45,9 @@ export function SocialLogin({ onSuccess, onError }: SocialLoginProps) {
           variant="outline"
           className="w-full flex items-center justify-center gap-2"
           onClick={handleGoogleLogin}
-          disabled={isLoading.google}
+          disabled={isLoading}
         >
-          {isLoading.google ? (
+          {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <svg className="h-5 w-5" viewBox="0 0 24 24">
