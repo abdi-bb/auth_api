@@ -48,7 +48,7 @@ export default function SigninClient() {
                         </div>
                         <div className="mt-8 space-y-6">
                             <SigninForm />
-                            <SocialLogin />
+                            {/* <SocialLogin /> */}
                         </div>
                     </div>
                 </div>

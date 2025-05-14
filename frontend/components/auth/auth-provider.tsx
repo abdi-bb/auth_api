@@ -22,7 +22,7 @@ type AuthContextType = {
   user: User | null
   login: (email: string, password: string) => Promise<User | null>
   logout: () => Promise<void>
-  socialLogin: (provider: string, token: string) => Promise<User | null>
+  socialLogin: (provider: string, params: Record<string, string>) => Promise<User | null>
   isAuthenticated: boolean
   isAdmin: boolean
   updateUser: (userData: Partial<User>) => Promise<User | null>
@@ -130,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const socialLogin = async (provider: string, token: string): Promise<User | null> => {
+  const socialLogin = async (provider: string, params: Record<string, string>): Promise<User | null> => {
     try {
       let endpoint = ""
 
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ access_token: token }),
+        body: JSON.stringify(params),
       })
 
       if (!response.ok) {
