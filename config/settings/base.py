@@ -1,9 +1,15 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
-from pathlib import Path
+# suppress dj-rest-auth deprecation warnings(add this to the top of your settings file)
+import warnings
 
-import environ
+warnings.filterwarnings("ignore", category=UserWarning, module="dj_rest_auth")
+
+
+from pathlib import Path  # noqa: E402
+
+import environ  # noqa: E402
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # auth_api/
@@ -273,9 +279,9 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_REQUIRED = True
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_USERNAME_REQUIRED = False
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # https://docs.allauth.org/en/latest/account/configuration.html
@@ -350,8 +356,8 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = (
     None  # Tell allauth that the User model has no username field
 )
 ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_USERNAME_REQUIRED = False
+# ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # ACCOUNT_EMAIL_VERIFICATION = "none"  # Override the above setting to configure for social login(No email verification required, as the email is already verified by the social provider)
