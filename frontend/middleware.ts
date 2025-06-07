@@ -27,7 +27,8 @@ export async function middleware(request: NextRequest) {
       isAdmin = userData.is_staff
     }
   } catch (error) {
-    console.error("Auth check error:", error)
+    // console.error("Auth check error:", error) // Uncomment for debugging now, commented to avoid unnecessary logs
+    // Silently fail, ignoring errors, Since this is just an initial auth check
   }
 
   if (isAuthenticated) {
