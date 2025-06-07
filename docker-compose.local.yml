@@ -32,3 +32,20 @@ services:
       - auth_api_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+
+  # My Stuff
+  next:
+    build:
+      context: .
+      dockerfile: ./compose/local/next/Dockerfile
+    image: auth_api_local_next
+    container_name: auth_api_local_next
+    depends_on:
+      - django
+    env_file:
+      - ./.envs/.local/.next
+    ports:
+      - "3000:3000" # Expose port 3000 for Node
+    # volumes: # - ./frontend/build:/usr/share/nginx/html:ro # Serve static files
+
+    command: /start

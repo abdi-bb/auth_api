@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,8 +11,12 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, User, Mail, Lock, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
+import { toast } from "../ui/use-toast"
+import { ROUTES } from "@/lib/auth-utils"
 
 export function SignupForm() {
+  const router = useRouter()
+  // State for form data and validation
   const [formData, setFormData] = useState({
     email: "",
     password1: "",
@@ -71,18 +76,36 @@ export function SignupForm() {
     }
 
     try {
-      await register(formData)
-      // Redirect is handled in the auth provider
+      const result = await register(
+        formData.email,
+        formData.password1,
+        formData.password2,
+        formData.first_name,
+        formData.last_name
+      );
+
+      // Check for success flag
+      if (result?._registrationSuccess) {
+        toast({
+          title: "Registration successful!",
+          description: "You can now login with your credentials.",
+          variant: "default",
+        });
+
+        // Redirect to login after showing toast
+        setTimeout(() => router.push(ROUTES.LOGIN), 1500);
+      }
+
     } catch (err: any) {
-      setError(err.message || "Registration failed. Please try again.")
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }
 
   return (
     <div className="w-full max-w-md mx-auto p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
-      <h2 className="text-2xl font-bold text-center mb-6 dark:text-white">Create an Account</h2>
+      {/* <h2 className="text-2xl font-bold text-center mb-6 dark:text-white">Create Your Event Scheduler Account</h2> */}
 
       {error && (
         <Alert variant="destructive" className="mb-4">
