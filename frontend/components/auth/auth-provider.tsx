@@ -16,10 +16,18 @@ interface User {
   profile?: {
     [key: string]: any
   }
+  _registrationSuccess?: boolean // Optional field to indicate registration success
 }
 
 type AuthContextType = {
   user: User | null
+  register: (
+    email: string,
+    password1: string,
+    password2: string,
+    firstName: string,
+    lastName: string
+  ) => Promise<User | null>
   login: (email: string, password: string) => Promise<User | null>
   logout: () => Promise<void>
   socialLogin: (provider: string, params: Record<string, string>) => Promise<User | null>
@@ -72,7 +80,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setIsAdmin(false)
         }
       } catch (error) {
-        console.error("Auth check error:", error)
+        // console.error("Auth check error:", error) // Uncomment for debugging, now commented to avoid unnecessary logs
+        // Silently fail, ignoring errors as this is just an initial auth check
       } finally {
         setLoading(false)
       }
@@ -80,6 +89,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     checkAuth()
   }, [])
+
+  const register = async (
+    email: string,
+    password1: string,
+    password2: string,
+    firstName: string,
+    lastName: string
+  ): Promise<User | null> => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/registration/`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password1,
+          password2,
+          first_name: firstName,
+          last_name: lastName,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        // Handle validation errors specifically
+        if (errorData.email || errorData.password1 || errorData.password2 || errorData.first_name || errorData.last_name) {
+          const errorMessages = Object.entries(errorData)
+            .map(([field, errors]) => `${field}: ${(errors as string[]).join(', ')}`)
+            .join('\n');
+          throw new Error(errorMessages);
+        }
+        throw new Error(errorData.detail || "Registration failed");
+      }
+
+      const data = await response.json();
+      const requiresVerification = !data.user;
+
+      if (requiresVerification) {
+        // Case 1: Verification required - show success page
+        router.push(`/auth/signup-success?verification=true`);
+      } else {
+        // Return the user data with a success flag
+        return {
+          ...data.user,
+          _registrationSuccess: true
+        };
+      }
+
+      return data.user || null;
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    }
+  };
 
   const login = async (email: string, password: string): Promise<User | null> => {
     try {
@@ -232,6 +297,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        register,
         login,
         logout,
         socialLogin,
